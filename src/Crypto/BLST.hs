@@ -170,7 +170,7 @@ verify
 verify (Signature sig) (PublicKey pk) bytes dst =
   unsafePerformIO $ coreVerifyPk pk sig meth bytes dst
   where
-    meth = demote @m
+    meth = demote @_ @m
 {-# NOINLINE verify #-}
 
 -- | Convenience synonym for 'Nothing'. Do not use domain separation tag.
@@ -204,7 +204,7 @@ aggregateVerify
   -> Maybe ba2 -- ^ Optional domain separation tag (must be the same as used for signing!)
   -> Either B.BlstError Bool
 aggregateVerify ((PublicKey pk1, msg1) :| xs) (Signature sig) dst = unsafePerformIO $ do
-  ctx <- B.pairingInit (demote @m) dst
+  ctx <- B.pairingInit (demote @_ @m) dst
   checkThrow =<< pairingChkNAggrPk ctx pk1 True (Just sig) True msg1
   forM_ xs $ \(PublicKey pki, msgi) ->
     checkThrow =<< pairingChkNAggrPk ctx pki True Nothing True msgi
